@@ -127,7 +127,7 @@ Reserved =
    "ELSE"                |
    "ELSEIF"              |
    "ENCLOSED"            |
-   "END"		 |
+   "END"				|
    "ESCAPED"             |
    "EXCEPTION" 		 |
    "EXISTS"              |
