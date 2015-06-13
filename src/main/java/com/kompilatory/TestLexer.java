@@ -18,14 +18,21 @@ public class TestLexer {
 		SqlLexer scanner = new SqlLexer(inputstream);
 		//do zczytywania po kolei tokenow
 		Token tok;
-		tok = scanner.yylex();
+		tok = scanner.next_token2();
 		int i=1;
 		while(tok!=null)
 		{	
+<<<<<<< HEAD
+			System.out.println("Token "+i+":"+tok.toString()+" :"+scanner.yytext());
+			tok = scanner.next_token2();
+=======
 			System.out.println("Token "+i+": "+tok.toString()+" : "+scanner.yytext());
 			tok = scanner.yylex();
+>>>>>>> 4451f7a347dae118f04f145d4e72f7dc415a45b1
 			i++;
 		}
+		
+		
 
 	}
 
