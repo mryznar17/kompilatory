@@ -14,6 +14,8 @@ import com.kompilatory.tokens.TokenType;
 %char
 %type Token
 %caseless
+%cup
+%cupdebug
 
 
 %{
