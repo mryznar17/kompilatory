@@ -19,7 +19,7 @@ public class SqlFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JTextField txtField;
 	private String path;
-	
+	private SqlPanel sqlPanel= null;
 	/**
 	 * Launch the application.
 	 */
@@ -49,6 +49,9 @@ public class SqlFrame extends JFrame {
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
 		panel.setBorder(javax.swing.BorderFactory.createTitledBorder("Settings"));
+
+		sqlPanel = new SqlPanel();
+		getContentPane().add(sqlPanel, BorderLayout.CENTER);
 		
 		JButton searchButton = new JButton("...");
 		searchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -89,17 +92,27 @@ public class SqlFrame extends JFrame {
 		generateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				try {
-					generateButtonActionPerformed(evt);
+					try {
+						generateButtonActionPerformed(evt);
+					} catch (SqlException e) {
+						e.showDialog();
+					}
 				} catch(NullPointerException e) {
 				}
 			}
-			private void generateButtonActionPerformed(ActionEvent evt) {
+			private void generateButtonActionPerformed(ActionEvent evt) throws SqlException {
 				path = txtField.getText();
-				System.out.println(path);
+				
 				// TO DO: Wszystko, czyli tworzenie i rysowanie diagramow
+				if(txtField == null || txtField.equals("path..")) {
+					throw new SqlException("No file chosen");
+				}
+				else{
+					sqlPanel.genSqlPanel();
+				}
 			}
 		});
 		panel.add(generateButton);
+		
 	}
-
 }
