@@ -1,8 +1,8 @@
 package com.kompilatory.lexers;
 
 
-import com.kompilatory.tokens.Token;
-import com.kompilatory.tokens.TokenType;
+import de.sciss.syntaxpane.Token;
+import de.sciss.syntaxpane.TokenType;
 
 %%
 

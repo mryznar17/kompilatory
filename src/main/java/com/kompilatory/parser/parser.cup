@@ -1,0 +1,36 @@
+package com.kompilatory.parser;
+
+import java_cup.runtime.*;
+
+parser code {:
+    // Connect this parser to a scanner!
+    Scanner s;
+    InputStream inputstream;
+    Parser(Scanner s,InputStream inputstream){ this.s=s; this.inputstream=inputstream; };
+    
+:}
+
+/* define how to connect to the scanner! */
+init with {: //s.init(); :};
+scan with {: return s.next_token(); :};
+
+
+/* Terminals (tokens returned by the scanner). */
+terminal    Double NUMBER;
+terminal	NEW_LINE; 
+
+
+/* Non terminals */
+non terminal            expr_list;
+non terminal Double	    expr,e;      // used to store evaluated subexpressions
+
+/* Precedences */
+precedence left NUMBER;
+precedence left NEW_LINE;
+
+/* The grammar rules */
+
+expr_list ::= NUMBER                {: System.out.println(5.0);:}
+;
+expr      ::= NEW_LINE     		   {: RESULT = 5.0;           :}
+             ;

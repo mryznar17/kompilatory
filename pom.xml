@@ -5,18 +5,27 @@
   <version>0.0.1-SNAPSHOT</version>
   
   <dependencies>
-  
-  	<dependency>
-		<groupId>de.jflex</groupId>
-		<artifactId>jflex</artifactId>
-		<version>1.4.3</version>
+   
+	<dependency>
+		<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+		<artifactId>java-cup</artifactId>
+		<version>0.11a</version>
 	</dependency>
-  	
-  	<dependency>
-	   <groupId>de.sciss</groupId>
-	   <artifactId>syntaxpane</artifactId>
-	   <version>1.1.2</version>
-	</dependency> 
+	
   </dependencies>
   
+  
+  <build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
