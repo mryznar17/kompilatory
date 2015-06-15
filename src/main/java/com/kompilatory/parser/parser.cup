@@ -1,6 +1,7 @@
 package com.kompilatory.parser;
 
 import java_cup.runtime.*;
+import java.io.InputStream;
 
 parser code {:
     // Connect this parser to a scanner!
@@ -16,21 +17,25 @@ scan with {: return s.next_token(); :};
 
 
 /* Terminals (tokens returned by the scanner). */
-terminal    Double NUMBER;
-terminal	NEW_LINE; 
+		
+terminal    ID;
+terminal	NEW_LINE;
+terminal 	CREATE, TABELE, IF, NOT, EXISTS, PRIMARY, KEY, REFERENCES;
+terminal 	INTEGER, REAL, VARCHAR, TEXT, TIMESTAMP, DATE, SERIAL;
+terminal	LBRACKET, RBRACKET, APOSTROPHE, COMMA;
 
 
 /* Non terminals */
 non terminal            expr_list;
-non terminal Double	    expr,e;      // used to store evaluated subexpressions
+non terminal Double	    expr;      // used to store evaluated subexpressions
 
 /* Precedences */
-precedence left NUMBER;
+precedence left ID;
 precedence left NEW_LINE;
 
 /* The grammar rules */
 
-expr_list ::= NUMBER                {: System.out.println(5.0);:}
+expr_list ::= ID	               {: System.out.println(5.0);:}
 ;
 expr      ::= NEW_LINE     		   {: RESULT = 5.0;           :}
              ;

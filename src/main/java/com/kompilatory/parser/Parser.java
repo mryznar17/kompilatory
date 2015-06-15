@@ -7,7 +7,7 @@ package com.kompilatory.parser;
 
 import java.io.InputStream;
 
-import java_cup.runtime.*;
+import java_cup.runtime.Scanner;
 //import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20150326 (SVN rev 63) generated parser.
@@ -137,7 +137,7 @@ class CUP$Parser$actions {
       switch (CUP$Parser$act_num)
         {
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 0: // expr_list ::= NUMBER 
+          case 0: // expr_list ::= ID 
             {
               Object RESULT =null;
 		 System.out.println(5.0);
