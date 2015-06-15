@@ -23,6 +23,7 @@ public class TestLexer {
 		int i=1;
 		while(tok!=null)
 		{	
+<<<<<<< HEAD
 
 			System.out.println("Token "+i+":"+tok.toString());//+" :"+scanner.yytext());
 			tok = scanner.next_token2();
@@ -30,6 +31,12 @@ public class TestLexer {
 //			System.out.println("Token "+i+": "+tok.toString()+" : "+scanner.yytext());
 //			tok = scanner.yylex();
 
+=======
+			System.out.println("Token "+i+":"+tok.toString()+" :"+scanner.yytext());
+			tok = scanner.next_token2();
+			System.out.println("Token "+i+": "+tok.toString()+" : "+scanner.yytext());
+			tok = scanner.yylex();
+>>>>>>> 622e83fc860a56fbbc5e6dccc14610a5c24afe9c
 			i++;
 		}
 		

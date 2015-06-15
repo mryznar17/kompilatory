@@ -10,9 +10,9 @@ public class TestTabela {
 		HashMap <String, String> atrybuty = new HashMap<String, String>();
 		LinkedList<String> powiazania = new LinkedList<String>();
 		
-		atrybuty.put("usr_idmusztardy", "serial primary key");
-		atrybuty.put("spr_idklienta", "varchar(10) references hurt.klienci(kli_idklienta)");
-		atrybuty.put("usr_emailbudyniu", "text");
+		atrybuty.put("test_kluczGlowny", "serial primary key");
+		atrybuty.put("test_kluczObcy", "varchar(10) references test2(test2_kluczGlowny)");
+		atrybuty.put("test_zwyklyAtrybut", "text");
 		
 		tab.setAtrybuty(atrybuty);
 		tab.szukajPowiazan();
