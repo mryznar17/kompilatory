@@ -3,6 +3,7 @@ package com.kompilatory.gui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -17,7 +18,8 @@ import javax.swing.UIManager;
 public class SqlFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JTextField txtField;
-
+	private String path;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -51,9 +53,13 @@ public class SqlFrame extends JFrame {
 		JButton searchButton = new JButton("...");
 		searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	searchButtonActionPerformed(evt);
+            	try {
+					searchButtonActionPerformed(evt);
+				} catch (SqlException e) {
+					e.showDialog();
+				}
             }
-			protected void searchButtonActionPerformed(ActionEvent evt) {
+			private void searchButtonActionPerformed(ActionEvent evt) throws SqlException {
 				String path = SqlFrame.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 				String decodedPath;
 				try {
@@ -67,10 +73,8 @@ public class SqlFrame extends JFrame {
 			            File f = searchFile.getSelectedFile();
 			            txtField.setText(f.getAbsolutePath());
 			        }
-					
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new SqlException("File encoding error");
 				}
 			}
         });
@@ -82,6 +86,19 @@ public class SqlFrame extends JFrame {
 		panel.add(searchButton);
 		
 		JButton generateButton = new JButton("Generate ERD");
+		generateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					generateButtonActionPerformed(evt);
+				} catch(NullPointerException e) {
+				}
+			}
+			private void generateButtonActionPerformed(ActionEvent evt) {
+				path = txtField.getText();
+				System.out.println(path);
+				// TO DO: Wszystko, czyli tworzenie i rysowanie diagramow
+			}
+		});
 		panel.add(generateButton);
 	}
 
