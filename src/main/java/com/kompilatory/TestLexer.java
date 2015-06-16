@@ -4,9 +4,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import jsyntaxpane.Token;
+
 import com.kompilatory.lexers.SqlLexer;
 
-import de.sciss.syntaxpane.Token;
+
 
 public class TestLexer {
 
@@ -24,17 +26,9 @@ public class TestLexer {
 		while(tok!=null)
 		{	
 
-
 			System.out.println("Token "+i+":"+tok.toString());//+" :"+scanner.yytext());
 			tok = scanner.next_token2();
 
-//			System.out.println("Token "+i+": "+tok.toString()+" : "+scanner.yytext());
-//			tok = scanner.yylex();
-
-			System.out.println("Token "+i+":"+tok.toString()+" :"+scanner.yytext());
-			tok = scanner.next_token2();
-			System.out.println("Token "+i+": "+tok.toString()+" : "+scanner.yytext());
-			tok = scanner.yylex();
 
 			i++;
 		}

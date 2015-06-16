@@ -5,15 +5,12 @@
 
 %%
 
+%public
 %class Scanner
 %line
 %column
 %cup
-%eofval{
 
-	return (symbol(sym.EOF));
-
-%eofval}
 
 %{
 /*
@@ -38,6 +35,12 @@
 		return new Symbol(type, yyline, yycolumn, value);
 	}
 	
+	/**
+	*	Metoda obslugujaca bledy
+	**/
+	private void error(String message) {
+    	System.out.println("Error at line "+(yyline+1)+", column "+(yycolumn+1)+" : "+message);
+  }
 %}
 
 	INTEGER = 0 | [1-9][0-9]*
@@ -58,19 +61,11 @@
 	COMMENT_CONTENT       = ( [^*] | \*+ [^/*] )*
 	END_OF_LINE_COMMENT = "--" {INPUT_CHARACTER}* {LINE_SEPARATOR}?
 	
-	IDENTIFIER		= [a-zA-Z]+[a-zA-Z0-9]*
+	IDENTIFIER		= [:jletter:][:jletterdigit:]*
 	
 %%
 
 	<YYINITIAL>{
-		
-		
-		{LINE_SEPARATOR}	{ return symbol(sym.NEW_LINE); }
-			
-		{COMMENT}			{ /* Ignorujemy komentarze */ }
-		{WHITE_SPACE}		{ /* Ignorujemy biale znaki */ }
-		
-		{IDENTIFIER}		{ return symbol(sym.ID, new String(yytext())); }
 		
 				/* keywords */
 		"create"		{ return symbol(sym.CREATE); }
@@ -97,9 +92,17 @@
 		";"				{ return symbol(sym.APOSTROPHE); }
 		","				{ return symbol(sym.COMMA); }
 		
+		{LINE_SEPARATOR}	{ return symbol(sym.NEW_LINE); }
+			
+		{COMMENT}			{ /* Ignorujemy komentarze */ }
+		{WHITE_SPACE}		{ /* Ignorujemy biale znaki */ }
+		
+		{IDENTIFIER}		{ return symbol(sym.ID, new String(yytext())); }
+		
 	}
 	
 		/* error fallback */
 .|\n              {  /* throw new Error("Illegal character <"+ yytext()+">");*/
 		    error("Illegal character <"+ yytext()+">");
                   }
+<<EOF>>           { return null; }

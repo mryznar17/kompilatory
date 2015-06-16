@@ -6,8 +6,25 @@ import java.io.InputStream;
 parser code {:
     // Connect this parser to a scanner!
     Scanner s;
+    Tabela tab;
     InputStream inputstream;
-    Parser(Scanner s,InputStream inputstream){ this.s=s; this.inputstream=inputstream; };
+    
+    public Parser(Scanner s,InputStream inputstream){ 
+    	this.s=s; 
+    	this.inputstream=inputstream; 
+    }
+    
+    public void setScanner(Scanner scanner)
+	{
+		this.scanner = scanner;
+	}
+	
+	public Tabela getTabela()
+	{
+		return this.tab;
+	}
+	
+	
     
 :}
 
@@ -20,14 +37,14 @@ scan with {: return s.next_token(); :};
 		
 terminal    ID;
 terminal	NEW_LINE;
-terminal 	CREATE, TABELE, IF, NOT, EXISTS, PRIMARY, KEY, REFERENCES;
+terminal 	CREATE, TABLE, IF, NOT, EXISTS, PRIMARY, KEY, REFERENCES;
 terminal 	INTEGER, REAL, VARCHAR, TEXT, TIMESTAMP, DATE, SERIAL;
 terminal	LBRACKET, RBRACKET, APOSTROPHE, COMMA;
 
 
 /* Non terminals */
-non terminal            expr_list;
-non terminal Double	    expr;      // used to store evaluated subexpressions
+non terminal            input;
+/*non terminal Double	    expr;      // used to store evaluated subexpressions */
 
 /* Precedences */
 precedence left ID;
@@ -35,7 +52,7 @@ precedence left NEW_LINE;
 
 /* The grammar rules */
 
-expr_list ::= ID	               {: System.out.println(5.0);:}
+input ::= ID	               {: System.out.println(5.0);:}
 ;
 expr      ::= NEW_LINE     		   {: RESULT = 5.0;           :}
              ;

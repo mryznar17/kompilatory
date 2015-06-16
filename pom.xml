@@ -16,10 +16,17 @@
 		<artifactId>jflex</artifactId>
 		<version>1.4.3</version>
 	</dependency>
+	
 	<dependency>
 		<groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
 		<artifactId>java-cup</artifactId>
 		<version>0.11a</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>de.sciss</groupId>
+		<artifactId>jsyntaxpane</artifactId>
+		<version>1.0.0</version>
 	</dependency>
 	
   </dependencies>

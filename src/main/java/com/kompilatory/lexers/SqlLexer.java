@@ -7,11 +7,11 @@ import java.io.IOException;
 
 import JFlex.sym;
 import java_cup.runtime.Symbol;
+import jsyntaxpane.Token;
+import jsyntaxpane.TokenType;
+import jsyntaxpane.lexers.DefaultJFlexLexer;
 
 
-import de.sciss.syntaxpane.Token;
-import de.sciss.syntaxpane.TokenType;
-import de.sciss.syntaxpane.lexers.DefaultJFlexLexer;
 
 
 /**
@@ -1432,7 +1432,7 @@ public final class SqlLexer extends DefaultJFlexLexer implements java_cup.runtim
   }
 
 @Override
-public de.sciss.syntaxpane.Token yylex() throws IOException {
+public Token yylex() throws IOException {
 	// TODO Auto-generated method stub
 	return null;
 }

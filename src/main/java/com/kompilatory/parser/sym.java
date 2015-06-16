@@ -16,12 +16,12 @@ public interface sym {
   public static final int LBRACKET = 19;
   public static final int ID = 2;
   public static final int RBRACKET = 20;
+  public static final int TABLE = 5;
   public static final int NEW_LINE = 3;
   public static final int VARCHAR = 14;
   public static final int CREATE = 4;
   public static final int COMMA = 22;
   public static final int EOF = 0;
-  public static final int TABELE = 5;
   public static final int SERIAL = 18;
   public static final int error = 1;
   public static final int EXISTS = 8;
@@ -37,7 +37,7 @@ public interface sym {
   "ID",
   "NEW_LINE",
   "CREATE",
-  "TABELE",
+  "TABLE",
   "IF",
   "NOT",
   "EXISTS",
