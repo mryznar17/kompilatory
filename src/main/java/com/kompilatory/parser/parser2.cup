@@ -1,0 +1,48 @@
+package com.kompilatory.parser;
+
+import java_cup.runtime.*;
+
+parser code {:
+    // Connect this parser to a scanner!
+    sqlLexer s;
+    InputStream inputstream;
+    Parser(sqlLexer s,InputStream inputstream){ this.s=s; this.inputstream=inputstream }
+    
+:}
+
+/* define how to connect to the scanner! */
+init with {: //s.init(); :};
+scan with {: return s.next_token2(); :};
+
+
+/* Terminals (tokens returned by the scanner). */
+terminal    OPERATOR;
+terminal	DELIMITER; 
+terminal    KEYWORD;
+terminal  String  IDENTIFIER; 
+terminal  Double  NUMBER;
+terminal    STRING;
+terminal    COMMENT; 
+terminal    ERROR;
+
+/* Non terminals */
+non terminal            expr_list;
+non terminal Integer    expr;      // used to store evaluated subexpressions
+
+/* Precedences */
+precedence left PLUS, MINUS;
+precedence left TIMES;
+precedence left UMINUS;
+
+/* The grammar rules */
+expr_list ::= expr_list expr:e SEMI         {: System.out.println(e);:}
+            | expr:e SEMI                   {: System.out.println(e);:}
+;
+expr      ::= expr:e1 PLUS  expr:e2         {: RESULT = e1+e2;       :}
+             | expr:e1 MINUS expr:e2        {: RESULT = e1-e2;       :}
+             | expr:e1 TIMES expr:e2        {: RESULT = e1*e2;       :}
+             | MINUS expr:e                 {: RESULT = -e;          :}
+  	     %prec UMINUS
+       | LPAREN expr:e RPAREN	         {: RESULT = e;           :}
+       | NUMBER:n	                     {: RESULT = n;           :}
+             ;
