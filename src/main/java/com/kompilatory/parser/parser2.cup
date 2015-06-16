@@ -1,3 +1,4 @@
+package com.kompilatory.parser;
 
 import java_cup.runtime.*;
 

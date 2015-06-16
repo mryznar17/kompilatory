@@ -25,9 +25,11 @@ import com.mxgraph.view.mxGraph;
 
 public class SqlFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private Tabela tab = null;
+	private LinkedList <Tabela> tabs = null;
 	private HashMap <String, String> atrybuty = null;
 	private LinkedList<String> powiazania = null;
+	private LinkedList<Object> vectors = null;
+	private Object v = null;
 	private Iterator<?> it = null;
 	private Map.Entry pair = null;
 	private int x;
@@ -35,7 +37,7 @@ public class SqlFrame extends JFrame {
 	private int TAB_WIDTH;
 	private int TAB_HEIGHT;
 	private JTextField txtField;
-	private String path;
+	private String path = null;
 	private String nl = "\n";
 	
 	/**
@@ -118,15 +120,15 @@ public class SqlFrame extends JFrame {
 			}
 			private void generateButtonActionPerformed(ActionEvent evt) throws SqlException {
 				path = txtField.getText();
+				tabs = new LinkedList<Tabela>();
 				
-				// TO DO: Wszystko, czyli tworzenie i rysowanie diagramow
-				if(txtField == null || txtField.equals("path..")) {
+				/*if(path == null || path.equals("path..")) {
 					throw new SqlException("No file chosen");
 				}
-				else{
+				else{*/
 					genSqlTable();
 					generateERD();
-				}
+				//}
 			}
 		});
 		panel.add(generateButton);
@@ -136,13 +138,41 @@ public class SqlFrame extends JFrame {
 	public void generateERD() {
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
+		vectors = new LinkedList<Object>();
 
 		graph.getModel().beginUpdate();
 		try
 		{
-			Object v1 = graph.insertVertex(parent, null, tableToString(tab), 100, 100, TAB_WIDTH, TAB_HEIGHT);
-			Object v2 = graph.insertVertex(parent, null, tableToString(tab), 200, 200, TAB_WIDTH, TAB_HEIGHT);
-			graph.insertEdge(parent, null, "", v1, v2);
+			v = graph.insertVertex(parent, null, tableToString(tabs.get(0)), 100, 100, TAB_WIDTH, TAB_HEIGHT);
+			vectors.add(v);
+			v = graph.insertVertex(parent, null, tableToString(tabs.get(1)), 200, 200, TAB_WIDTH, TAB_HEIGHT);
+			vectors.add(v);
+			v = graph.insertVertex(parent, null, tableToString(tabs.get(2)), 300, 300, TAB_WIDTH, TAB_HEIGHT);
+			vectors.add(v);
+			
+			//graph.insertEdge(parent, null, "", vectors.get(0), vectors.get(1));
+			//graph.insertEdge(parent, null, "", vectors.get(0), vectors.get(2));
+			
+			for(int i = 0; i < vectors.size(); i++) {
+				System.out.println("iteracja 'i': "+i);
+				System.out.println("rozmiar 'i': "+vectors.size());
+				for(int j = 0; j < tabs.get(i).getPowiazania().size(); i++) {
+					System.out.println("iteracja 'j': "+j);
+					System.out.println("rozmiar 'j': "+tabs.get(i).getPowiazania().size());
+					//System.out.println(tabs.get(i).getPowiazania().get(j).toString());
+					String[] powSplit = tabs.get(i).getPowiazania().get(j).split(" ");
+					for(int x = 0; x < tabs.size(); x++) {
+						System.out.println("iteracja 'x': "+x);
+						System.out.println("rozmiar 'x': "+tabs.size());
+						//System.out.println(tabs.get(i).getNazwa() + "  :  "+tabs.get(x).getNazwa());
+						//System.out.println(powSplit[1].toLowerCase() +"  :  "+(tabs.get(x).getNazwa().toLowerCase()));
+						if((tabs.get(i) != tabs.get(x)) && powSplit[1].toLowerCase().equals(tabs.get(x).getNazwa().toLowerCase())) {
+							//graph.insertEdge(parent, null, "", vectors.get(i), vectors.get(x));
+						}
+					}
+				}
+			}
+			
 		}
 		finally
 		{
@@ -156,7 +186,8 @@ public class SqlFrame extends JFrame {
 	}
 	
 	public void genSqlTable() {
-		tab = new Tabela();
+		//hardcodowanie tabeli 1:
+		Tabela tab = new Tabela();
 		atrybuty = new HashMap<String, String>();
 		powiazania = new LinkedList<String>();
 		
@@ -164,34 +195,99 @@ public class SqlFrame extends JFrame {
 		y = 100;
 		
 		atrybuty.put("test_kluczGlowny", "serial primary key");
-		atrybuty.put("test_kluczObcy", "varchar(10) references test2(test2_kluczGlowny)");
+		atrybuty.put("test_kluczObcy1", "varchar(10) references test2(test2_kluczGlowny)");
+		atrybuty.put("test_kluczObcy2", "integer references test3(test3_kluczGlowny)");
 		atrybuty.put("test_zwyklyAtrybut", "text");
 		
 		tab.setNazwa("Test");
 		tab.setAtrybuty(atrybuty);
 		tab.szukajPowiazan();
 		powiazania = tab.getPowiazania();
+		
+		tabs.add(tab);
+		
+		/*
+		System.out.println("NAZWA: "+tab.getNazwa());
+		System.out.println("KLUCZ GLOWNY: "+tab.getKluczGlowny());
+		System.out.println("ATRYBUTY:");
+		it = tab.getAtrybuty().entrySet().iterator();
+		for(int i = 0; it.hasNext(); i++) {
+			pair = (Map.Entry)it.next();
+			System.out.println("KLUCZ: "+pair.getKey()+"\nWARTOSC: "+pair.getValue());
+		}
+		System.out.println("KLUCZE OBCE: ");
+		for(int i = 0; i < tab.getPowiazania().size(); i++)
+			System.out.println(tab.getPowiazania().get(i).toString());
+		*/
+			
+		//hardcodowanie tabeli 2:
+		tab = new Tabela();
+		atrybuty = new HashMap<String, String>();
+		powiazania = new LinkedList<String>();
+		
+		atrybuty.put("test2_kluczGlowny", "varchar(10) primary key");
+		atrybuty.put("test2_zwyklyAtrybut", "text");
+		tab.setNazwa("Test2");
+		tab.setAtrybuty(atrybuty);
+		tab.szukajPowiazan();
+		powiazania = tab.getPowiazania();
+		tabs.add(tab);
+		
+		//hardcodowanie tabeli 3:
+		tab = new Tabela();
+		atrybuty = new HashMap<String, String>();
+		powiazania = new LinkedList<String>();
+		
+		atrybuty.put("test3_kluczGlowny", "integer primary key");
+		atrybuty.put("test3_zwyklyAtrybut1", "text");
+		atrybuty.put("test3_zwyklyAtrybut2", "text");
+		atrybuty.put("test3_zwyklyAtrybut3", "text");
+		tab.setNazwa("Test3");
+		tab.setAtrybuty(atrybuty);
+		tab.szukajPowiazan();
+		powiazania = tab.getPowiazania();
+		tabs.add(tab);
 	}
 	
 	public String tableToString(Tabela tab) {
-		TAB_WIDTH = 0;
-		TAB_HEIGHT = 0;
+		boolean fkFound = false;
+		if(tab.getKluczGlowny() != null)
+			TAB_WIDTH = tab.getKluczGlowny().length();
+		else
+			TAB_WIDTH = 0;
+		TAB_HEIGHT = 1;
 		it = tab.getAtrybuty().entrySet().iterator();
-		for(int i =0; it.hasNext(); i++) {
+		for(int i = 0; it.hasNext(); i++) {
 			TAB_HEIGHT += 1;
 			pair = (Map.Entry)it.next();
-			if(TAB_WIDTH < pair.toString().length())
-				TAB_WIDTH = pair.toString().length();
+			String[] varSplit = pair.getValue().toString().split(" ");
+			if(TAB_WIDTH < pair.getKey().toString().length()+varSplit[0].length())
+				TAB_WIDTH = pair.getKey().toString().length()+varSplit[0].length();
 		}
 		TAB_WIDTH *= 6;
 		TAB_HEIGHT *= 20;
 		
 		String znak_ = new String(new char[(TAB_WIDTH-tab.getNazwa().length())/13]).replace("\0", "_");
 		String s = znak_+tab.getNazwa().toString().toUpperCase()+znak_;
+		if(tab.getKluczGlowny() != null)
+			s += nl+tab.getKluczGlowny();
 		it = tab.getAtrybuty().entrySet().iterator();
 		for(int i =0; it.hasNext(); i++) {
+			fkFound = false;
 			pair = (Map.Entry)it.next();
-			s += nl+pair.getKey()+":"+pair.getValue();
+			String[] varSplit = pair.getValue().toString().split(" ");
+			if(tab.getPowiazania().size() != 0) {
+				for(int j = 0; j < tab.getPowiazania().size(); j++) {
+					if(tab.getPowiazania().get(j).contains(pair.getKey().toString())) {
+						s += nl+pair.getKey()+"(FK) : "+varSplit[0];
+						fkFound = true;
+						break;
+					}
+				}
+				if(fkFound != true)
+					s += nl+pair.getKey()+" : "+varSplit[0];
+			} else
+				s += nl+pair.getKey()+" : "+varSplit[0];
 		}
 		return s;
 	}
