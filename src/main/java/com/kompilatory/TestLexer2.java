@@ -14,6 +14,8 @@ import com.kompilatory.parser.sym;
 
 public class TestLexer2 {
 
+
+
 	public static void main(String[] args) throws IOException {
 		String init="init2.sql";
 		//BufferedReader buffer = new BufferedReader(new FileReader(init));

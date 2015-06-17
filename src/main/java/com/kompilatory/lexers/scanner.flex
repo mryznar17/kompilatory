@@ -2,6 +2,7 @@
 	import java.util.*;
 	import java_cup.runtime.Symbol;
 	import java_cup.runtime.*;
+	import com.kompilatory.parser.sym;
 
 %%
 
@@ -85,6 +86,8 @@
 		"timestamp"		{ return symbol(sym.TIMESTAMP); }
 		"date"			{ return symbol(sym.DATE); }
 		"serial"		{ return symbol(sym.SERIAL); }
+		"integer"		{ return symbol(sym.INTEGER_TYPE); }
+		"real"			{ return symbol(sym.REAL_TYPE); }
 		
 			/* operators */
 		"("				{ return symbol(sym.LBRACKET); }

@@ -2,15 +2,20 @@ package com.kompilatory.parser;
 
 import java_cup.runtime.*;
 import java.io.InputStream;
+import com.kompilatory.model.Tabela;
 
 parser code {:
     // Connect this parser to a scanner!
-    Scanner s;
+    Scanner scanner;
+    
     Tabela tab;
+    String name;
+    String type;
+    String key;
     InputStream inputstream;
     
-    public Parser(Scanner s,InputStream inputstream){ 
-    	this.s=s; 
+    public ParserCup(Scanner s,InputStream inputstream){ 
+    	this.scanner=s; 
     	this.inputstream=inputstream; 
     }
     
@@ -24,35 +29,93 @@ parser code {:
 		return this.tab;
 	}
 	
+	public void setTabela(Tabela tab)
+	{
+		this.tab=tab;
+	}
 	
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public String getKey() {
+		return this.key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
     
 :}
 
 /* define how to connect to the scanner! */
 init with {: //s.init(); :};
-scan with {: return s.next_token(); :};
+scan with {: return scanner.next_token(); :};
 
 
 /* Terminals (tokens returned by the scanner). */
 		
-terminal    ID;
+terminal    String 	ID;
 terminal	NEW_LINE;
 terminal 	CREATE, TABLE, IF, NOT, EXISTS, PRIMARY, KEY, REFERENCES;
-terminal 	INTEGER, REAL, VARCHAR, TEXT, TIMESTAMP, DATE, SERIAL;
+terminal 	INTEGER, REAL, VARCHAR, TEXT, TIMESTAMP, DATE, SERIAL, INTEGER_TYPE, REAL_TYPE;
 terminal	LBRACKET, RBRACKET, APOSTROPHE, COMMA;
 
 
 /* Non terminals */
-non terminal            input;
-/*non terminal Double	    expr;      // used to store evaluated subexpressions */
+non terminal            input,line;
+non terminal 			new_table;
+non terminal 			def, dec, mid, variable, var_type, type, key;
 
 /* Precedences */
 precedence left ID;
-precedence left NEW_LINE;
+/*precedence left NEW_LINE; */
 
 /* The grammar rules */
+//TODO : Przetestowac i dodawac tabele do linkedList i atrybuty do hashmapy
+input 		::= 	input new_table 	|	input NEW_LINE	|	NEW_LINE	| new_table		;
 
-input ::= ID	               {: System.out.println(5.0);:}
-;
-expr      ::= NEW_LINE     		   {: RESULT = 5.0;           :}
-             ;
+new_table 	::=		def APOSTROPHE NEW_LINE;
+
+def			::=		CREATE TABLE IF NOT EXISTS ID:var dec	{: parser.setTabela(new Tabela());	 parser.getTabela().setNazwa(var); :}		|
+					CREATE TABLE ID:var dec 				{: parser.setTabela(new Tabela()); 	 parser.getTabela().setNazwa(var); :}	;
+					
+dec			::= 	LBRACKET mid RBRACKET;
+
+mid			::=		mid variable	|	variable	;
+
+variable	::= 	ID:var	var_type COMMA		{: parser.setName(var); :}	|
+					ID:var	var_type			{: parser.setName(var); :}	;
+
+var_type	::=		INTEGER_TYPE key								{: parser.setType("integer"); :}
+				|	REAL_TYPE key									{: parser.setType("real"); :}
+				|	VARCHAR  key LBRACKET INTEGER:val RBRACKET		{: parser.setType("varchar("+val+")"); :}
+				|	TEXT key										{: parser.setType("text"); :}
+				|	TIMESTAMP key									{: parser.setType("timestamp"); :}
+				|	DATE key										{: parser.setType("date"); :}
+				|	SERIAL key										{: parser.setType("serial"); :}
+				;
+				
+key			::=		PRIMARY KEY										{:	String tmp=parser.getType(); parser.setType(tmp+" primary key");	:}	|
+					REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{:	String tmp=parser.getType(); String tmp2=var+"("+var2+")";
+																		parser.setType(tmp+" "+tmp2);	:}		;
+		
+/*		
+line ::=	NEW_LINE {: System.out.println("Nowa linia w parserze"); :} 
+		|	CREATE TABLE IF NOT EXISTS ID:var NEW_LINE {: parser.getTabela().setNazwa(var.toString()) ; :}
+		;
+*/
+				             
