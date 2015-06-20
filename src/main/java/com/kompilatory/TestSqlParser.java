@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import com.kompilatory.lexers.SqlLexer;
 import com.kompilatory.model.Tabela;
@@ -36,7 +37,11 @@ public class TestSqlParser {
 		System.out.println("Wielkosc listy: "+tabs.size());
 		for(Tabela t:tabs)
 		{
-			//System.out.println(t.getNazwa());
+			System.out.println(t.getNazwa()+" atrybuty:");
+			for(Map.Entry<String, String> entry: t.getAtrybuty().entrySet()){
+			    System.out.println("Wartosc: "+entry.getValue()+" Klucz:"+entry.getKey());
+			 }
+			
 		}
 		if(parser==null) System.out.println("Parser jest nullem");
 	}

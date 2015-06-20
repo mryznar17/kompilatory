@@ -6,7 +6,7 @@ import com.kompilatory.model.Tabela;
 import java.util.LinkedList;
 
 parser code {:
-	Tabela tab;
+	Tabela tab = new Tabela();
 	List<Tabela> tabele = new LinkedList<Tabela>();
 	String nazwa;
 	String typ;
@@ -50,8 +50,9 @@ new_table 	::=		def:a APOSTROPHE {: RESULT=a; :};
 
 def			::=		CREATE TABLE IF NOT EXISTS ID:var dec	{:  RESULT = "test3000";
 															System.out.println(var.toString()+"costam"); 
-															parser.tab=new Tabela(); parser.tab.setNazwa(var.toString()); 
-															
+															 parser.tab.setNazwa(var.toString()); 
+															parser.tabele.add(parser.tab);
+															parser.tab=new Tabela();
 															:}		|
 					CREATE TABLE ID:var dec 				{: parser.tab=new Tabela(); parser.tab.setNazwa(var.toString()); :}	;
 					
@@ -59,8 +60,8 @@ dec			::= 	LBRACKET mid RBRACKET;
 
 mid			::=		mid variable	|	variable {:  :}	| 	key	{:  :} ;	
 
-variable	::= 	ID:var	var_type COMMA		{:  :}	|
-					ID:var	var_type	{: parser.tabele.add(parser.tab); :}		{:  :}	;
+variable	::= 	ID:var	var_type COMMA		{: parser.nazwa=var.toString(); parser.tab.getAtrybuty().put(parser.nazwa,"test type"); :}	|
+					ID:var	var_type	{: parser.nazwa=var.toString(); parser.tab.getAtrybuty().put(parser.nazwa,"test type"); :}	;
 					
 
 var_type	::=		INTEGER_TYPE key	{:  :} |	INTEGER_TYPE			{:  :}
