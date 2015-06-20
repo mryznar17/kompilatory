@@ -7,7 +7,7 @@ import de.sciss.syntaxpane.TokenType;
 %%
 
 %public
-%class SqlLexer
+%class SqlLexer2
 %extends DefaultJFlexLexer
 %final
 %unicode

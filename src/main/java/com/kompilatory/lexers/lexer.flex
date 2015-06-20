@@ -7,7 +7,7 @@
 %%
 
 %public
-%class Scanner
+%class SqlLexer
 %line
 %column
 %cup
@@ -43,12 +43,13 @@
     	System.out.println("Error at line "+(yyline+1)+", column "+(yycolumn+1)+" : "+message);
   }
 %}
-
-	INTEGER = 0 | [1-9][0-9]*
+/* Definicja terminali:*/
+	DIGIT = [0-9]
+	INTEGER = {DIGIT}+
 	REAL	= {INTEGER}[.][0-9]+
 	/* NUMBER	= {INTEGER}|{REAL} */
 	
-	VARCHAR = varchar({INTEGER})
+	/*VARCHAR = [varchar]({INTEGER})*/
 	/* STRING = {VARCHAR} | {TEXT} */
 	
 	WHITE_SPACE		= [ \t\f]
@@ -66,8 +67,8 @@
 	
 %%
 
-	<YYINITIAL>{
-		
+/*	<YYINITIAL>{ */
+		//TODO: litery duze i male
 				/* keywords */
 		"create"		{ return symbol(sym.CREATE); }
 		"table"			{ return symbol(sym.TABLE); }
@@ -79,9 +80,9 @@
 		"references"	{ return symbol(sym.REFERENCES); }
 		
 				/* types */
-		INTEGER			{ return symbol(sym.INTEGER); }
-		REAL			{ return symbol(sym.REAL); }
-		VARCHAR			{ return symbol(sym.VARCHAR); }
+		{INTEGER}		{ return symbol(sym.INTEGER); }
+		{REAL}			{ return symbol(sym.REAL); }
+		"varchar"		{ return symbol(sym.VARCHAR); }
 		"text"			{ return symbol(sym.TEXT); }
 		"timestamp"		{ return symbol(sym.TIMESTAMP); }
 		"date"			{ return symbol(sym.DATE); }
@@ -95,14 +96,14 @@
 		";"				{ return symbol(sym.APOSTROPHE); }
 		","				{ return symbol(sym.COMMA); }
 		
-		{LINE_SEPARATOR}	{ return symbol(sym.NEW_LINE); }
+		{LINE_SEPARATOR}	{ /* return symbol(sym.NEW_LINE); */ }
 			
 		{COMMENT}			{ /* Ignorujemy komentarze */ }
 		{WHITE_SPACE}		{ /* Ignorujemy biale znaki */ }
 		
 		{IDENTIFIER}		{ return symbol(sym.ID, new String(yytext())); }
 		
-	}
+/*	} */
 	
 		/* error fallback */
 .|\n              {  /* throw new Error("Illegal character <"+ yytext()+">");*/

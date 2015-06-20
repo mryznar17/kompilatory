@@ -39,15 +39,15 @@ create table if not exists group_profile(
 );
 
 create table if not exists group_content(
-	con_grp_id	integer references group_profile(grp_id),
-	con_usr_id	integer references users(usr_id),
-	primary key(con_grp_id,con_usr_id)	
+	con_grp_id	integer primary key references group_profile(grp_id),
+	con_usr_id	integer primary key references users(usr_id)
+	/*primary key(con_grp_id,con_usr_id)*/	
 );
 
 create table if not exists friends(
-	fri_usr_id	integer references users(usr_id),
-	fri_id	integer,
-	primary key(fri_usr_id,fri_id)	
+	fri_usr_id	integer  primary key references users(usr_id),
+	fri_id	integer  primary key
+	/*primary key(fri_usr_id,fri_id)	*/
 );
 
 
@@ -78,9 +78,9 @@ create table if not exists lately_searched_poi(
 );
 
 create table if not exists node_way(
-	now_way_id integer references way(way_id),
-	now_node_id integer references node(nod_id),
-	primary key(now_way_id,now_node_id)
+	now_way_id integer primary key references way(way_id),
+	now_node_id integer primary key references node(nod_id)
+	/*primary key(now_way_id,now_node_id)*/
 );
 
 create table if not exists favourite_ways(

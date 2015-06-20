@@ -1,0 +1,78 @@
+package com.kompilatory.parser;
+
+import java_cup.runtime.*;
+import java.util.List;
+import com.kompilatory.model.Tabela;
+import java.util.LinkedList;
+
+parser code {:
+	Tabela tab;
+	List<Tabela> tabele = new LinkedList<Tabela>();
+	String nazwa;
+	String typ;
+	
+	public Tabela getTabela()
+	{
+		return this.tab;
+	}
+	
+	public List<Tabela> getTabele()
+	{
+		return this.tabele;
+	}
+:}
+
+/* Terminals (tokens returned by the scanner). */
+		
+terminal    String 	ID;
+terminal 	CREATE, TABLE, IF, NOT, EXISTS, PRIMARY, KEY, REFERENCES;
+terminal 	INTEGER, REAL, VARCHAR, TEXT, TIMESTAMP, DATE, SERIAL, INTEGER_TYPE, REAL_TYPE;
+terminal	LBRACKET, RBRACKET, APOSTROPHE, COMMA;
+
+
+/* Non terminals */
+non terminal            input,line;
+non terminal 			new_table;
+non terminal String		def;
+non terminal			dec, mid, variable, var_type, type, key;
+non terminal String		nowa_tabela;
+non terminal			primary_key;
+non terminal			atr;
+
+/* Precedences */
+precedence left key,variable;
+
+/* The grammar rules */
+//TODO : Przetestowac i dodawac tabele do linkedList i atrybuty do hashmapy
+input 		::= 	input:a new_table 	{: RESULT=a; :}  	| new_table:a	{: RESULT=a; :}	;
+
+new_table 	::=		def:a APOSTROPHE {: RESULT=a; :};
+
+def			::=		CREATE TABLE IF NOT EXISTS ID:var dec	{:  RESULT = "test3000";
+															System.out.println(var.toString()+"costam"); 
+															parser.tab=new Tabela(); parser.tab.setNazwa(var.toString()); 
+															
+															:}		|
+					CREATE TABLE ID:var dec 				{: parser.tab=new Tabela(); parser.tab.setNazwa(var.toString()); :}	;
+					
+dec			::= 	LBRACKET mid RBRACKET;
+
+mid			::=		mid variable	|	variable {:  :}	| 	key	{:  :} ;	
+
+variable	::= 	ID:var	var_type COMMA		{:  :}	|
+					ID:var	var_type	{: parser.tabele.add(parser.tab); :}		{:  :}	;
+					
+
+var_type	::=		INTEGER_TYPE key	{:  :} |	INTEGER_TYPE			{:  :}
+				|	REAL_TYPE key		|	REAL_TYPE				{: :}
+				|	VARCHAR LBRACKET INTEGER:val RBRACKET	key | VARCHAR  LBRACKET INTEGER:val RBRACKET	{:  :}
+				|	TEXT key			| 	TEXT					{:  :}
+				|	TIMESTAMP key		|	TIMESTAMP				{:  :}
+				|	DATE key			|	DATE					{:  :}
+				|	SERIAL key		{:  :}	|	SERIAL		{:  :}			
+				;
+				
+key			::=		PRIMARY KEY		{: :}	|
+					REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{:		:}	|
+					PRIMARY KEY	REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{:		:}	|
+					PRIMARY KEY LBRACKET ID:var COMMA ID:var2 RBRACKET {:  :}	;
