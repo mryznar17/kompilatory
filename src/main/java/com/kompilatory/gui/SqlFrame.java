@@ -20,20 +20,21 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import com.kompilatory.model.Tabela;
+import com.mxgraph.shape.mxConnectorShape;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 
 public class SqlFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private LinkedList <Tabela> tabs = null;
 	private HashMap <String, String> atrybuty = null;
-	private LinkedList<String> powiazania = null;
 	private LinkedList<Object> vectors = null;
 	private Object v = null;
 	private Iterator<?> it = null;
 	private Map.Entry pair = null;
-	private int x;
-	private int y;
+	private static int x;
+	private static int y;
 	private int TAB_WIDTH;
 	private int TAB_HEIGHT;
 	private JTextField txtField;
@@ -139,35 +140,23 @@ public class SqlFrame extends JFrame {
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
 		vectors = new LinkedList<Object>();
-
 		graph.getModel().beginUpdate();
+		
 		try
 		{
-			v = graph.insertVertex(parent, null, tableToString(tabs.get(0)), 100, 100, TAB_WIDTH, TAB_HEIGHT);
-			vectors.add(v);
-			v = graph.insertVertex(parent, null, tableToString(tabs.get(1)), 200, 200, TAB_WIDTH, TAB_HEIGHT);
-			vectors.add(v);
-			v = graph.insertVertex(parent, null, tableToString(tabs.get(2)), 300, 300, TAB_WIDTH, TAB_HEIGHT);
-			vectors.add(v);
+			// generowanie tabel encji
+			for(int i = 0; i < tabs.size(); i++) {
+				v = graph.insertVertex(parent, null, tableToString(tabs.get(i)), x*(i+1), y*(i+1), TAB_WIDTH, TAB_HEIGHT);
+				vectors.add(v);
+			}
 			
-			//graph.insertEdge(parent, null, "", vectors.get(0), vectors.get(1));
-			//graph.insertEdge(parent, null, "", vectors.get(0), vectors.get(2));
-			
+			// laczenie encji strzalkami na podstawie kluczy obcych
 			for(int i = 0; i < vectors.size(); i++) {
-				System.out.println("iteracja 'i': "+i);
-				System.out.println("rozmiar 'i': "+vectors.size());
-				for(int j = 0; j < tabs.get(i).getPowiazania().size(); i++) {
-					System.out.println("iteracja 'j': "+j);
-					System.out.println("rozmiar 'j': "+tabs.get(i).getPowiazania().size());
-					//System.out.println(tabs.get(i).getPowiazania().get(j).toString());
+				for(int j = 0; j < tabs.get(i).getPowiazania().size(); j++) {
 					String[] powSplit = tabs.get(i).getPowiazania().get(j).split(" ");
 					for(int x = 0; x < tabs.size(); x++) {
-						System.out.println("iteracja 'x': "+x);
-						System.out.println("rozmiar 'x': "+tabs.size());
-						//System.out.println(tabs.get(i).getNazwa() + "  :  "+tabs.get(x).getNazwa());
-						//System.out.println(powSplit[1].toLowerCase() +"  :  "+(tabs.get(x).getNazwa().toLowerCase()));
 						if((tabs.get(i) != tabs.get(x)) && powSplit[1].toLowerCase().equals(tabs.get(x).getNazwa().toLowerCase())) {
-							//graph.insertEdge(parent, null, "", vectors.get(i), vectors.get(x));
+							graph.insertEdge(parent, null, "", vectors.get(i), vectors.get(x), "endArrow=none");
 						}
 					}
 				}
@@ -189,20 +178,18 @@ public class SqlFrame extends JFrame {
 		//hardcodowanie tabeli 1:
 		Tabela tab = new Tabela();
 		atrybuty = new HashMap<String, String>();
-		powiazania = new LinkedList<String>();
 		
 		x = 100;
 		y = 100;
 		
 		atrybuty.put("test_kluczGlowny", "serial primary key");
-		atrybuty.put("test_kluczObcy1", "varchar(10) references test2(test2_kluczGlowny)");
-		atrybuty.put("test_kluczObcy2", "integer references test3(test3_kluczGlowny)");
+		atrybuty.put("test_kluczObcy1doTest2", "varchar(10) references test2(test2_kluczGlowny)");
+		atrybuty.put("test_kluczObcy2doTest3", "integer references test3(test3_kluczGlowny)");
 		atrybuty.put("test_zwyklyAtrybut", "text");
 		
 		tab.setNazwa("Test");
 		tab.setAtrybuty(atrybuty);
 		tab.szukajPowiazan();
-		powiazania = tab.getPowiazania();
 		
 		tabs.add(tab);
 		
@@ -223,20 +210,18 @@ public class SqlFrame extends JFrame {
 		//hardcodowanie tabeli 2:
 		tab = new Tabela();
 		atrybuty = new HashMap<String, String>();
-		powiazania = new LinkedList<String>();
 		
 		atrybuty.put("test2_kluczGlowny", "varchar(10) primary key");
+		atrybuty.put("test2_kluczObcyDoTest3", "integer references test3(test3_kluczGlowny)");
 		atrybuty.put("test2_zwyklyAtrybut", "text");
 		tab.setNazwa("Test2");
 		tab.setAtrybuty(atrybuty);
 		tab.szukajPowiazan();
-		powiazania = tab.getPowiazania();
 		tabs.add(tab);
 		
 		//hardcodowanie tabeli 3:
 		tab = new Tabela();
 		atrybuty = new HashMap<String, String>();
-		powiazania = new LinkedList<String>();
 		
 		atrybuty.put("test3_kluczGlowny", "integer primary key");
 		atrybuty.put("test3_zwyklyAtrybut1", "text");
@@ -245,7 +230,6 @@ public class SqlFrame extends JFrame {
 		tab.setNazwa("Test3");
 		tab.setAtrybuty(atrybuty);
 		tab.szukajPowiazan();
-		powiazania = tab.getPowiazania();
 		tabs.add(tab);
 	}
 	
@@ -264,7 +248,7 @@ public class SqlFrame extends JFrame {
 			if(TAB_WIDTH < pair.getKey().toString().length()+varSplit[0].length())
 				TAB_WIDTH = pair.getKey().toString().length()+varSplit[0].length();
 		}
-		TAB_WIDTH *= 6;
+		TAB_WIDTH *= 7;
 		TAB_HEIGHT *= 20;
 		
 		String znak_ = new String(new char[(TAB_WIDTH-tab.getNazwa().length())/13]).replace("\0", "_");
