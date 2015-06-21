@@ -13,7 +13,7 @@ import com.kompilatory.parser.SqlCup;
 public class TestSqlParser {
 
 	public static void main(String[] args) throws FileNotFoundException {
-		String init="init3.sql";
+		String init="init.sql";
 		
 		InputStream inputstream = new FileInputStream(init);
 		SqlLexer scanner = new SqlLexer(inputstream);
@@ -22,28 +22,28 @@ public class TestSqlParser {
 
 		try {
 			String p = (String) parser.parse().value;
-			System.out.println("test");
-			System.out.println(p);
+//			System.out.println("test");
+//			System.out.println(p);
 		} catch (Exception e) {
-			System.out.println("Tutaj obs³uga wyj¹tku czyli wyskakuj¹ce okno");
+			System.out.println("Tutaj obsï¿½uga wyjï¿½tku czyli wyskakujï¿½ce okno");
 			e.printStackTrace();
 		}
 		
-		Tabela tmp = parser.getTabela();
-		System.out.println("Test tabeli: ");
-		System.out.println(tmp.getNazwa());
+//		Tabela tmp = parser.getTabela();
+//		System.out.println("Test tabeli: ");
+//		System.out.println(tmp.getNazwa());
 		
 		List<Tabela> tabs= parser.getTabele();
-		System.out.println("Wielkosc listy: "+tabs.size());
-		for(Tabela t:tabs)
-		{
-			System.out.println(t.getNazwa()+" atrybuty:");
-			for(Map.Entry<String, String> entry: t.getAtrybuty().entrySet()){
-			    System.out.println("Wartosc: "+entry.getValue()+" Klucz:"+entry.getKey());
-			 }
-			
-		}
-		if(parser==null) System.out.println("Parser jest nullem");
+//		System.out.println("Wielkosc listy: "+tabs.size());
+//		for(Tabela t:tabs)
+//		{
+//			System.out.println(t.getNazwa()+" atrybuty:");
+//			for(Map.Entry<String, String> entry: t.getAtrybuty().entrySet()){
+//			    System.out.println("Wartosc: "+entry.getValue()+" Klucz:"+entry.getKey());
+//			 }
+//			
+//		}
+//		if(parser==null) System.out.println("Parser jest nullem");
 	}
 
 }
