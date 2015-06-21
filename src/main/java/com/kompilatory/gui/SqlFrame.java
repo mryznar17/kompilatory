@@ -5,9 +5,11 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -19,20 +21,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import com.kompilatory.lexers.SqlLexer;
 import com.kompilatory.model.Tabela;
-import com.mxgraph.shape.mxConnectorShape;
+import com.kompilatory.parser.SqlCup;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 
 public class SqlFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private LinkedList <Tabela> tabs = null;
-	private HashMap <String, String> atrybuty = null;
 	private LinkedList<Object> vectors = null;
 	private Object v = null;
 	private Iterator<?> it = null;
 	private Map.Entry pair = null;
+	private InputStream inputstream;
 	private static int x;
 	private static int y;
 	private int TAB_WIDTH;
@@ -111,25 +113,23 @@ public class SqlFrame extends JFrame {
 		generateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				try {
-					try {
-						generateButtonActionPerformed(evt);
-					} catch (SqlException e) {
-						e.showDialog();
-					}
+					generateButtonActionPerformed(evt);
+				} catch (SqlException e) {
+					e.showDialog();
 				} catch(NullPointerException e) {
+					
 				}
 			}
 			private void generateButtonActionPerformed(ActionEvent evt) throws SqlException {
 				path = txtField.getText();
-				tabs = new LinkedList<Tabela>();
-				
-				/*if(path == null || path.equals("path..")) {
-					throw new SqlException("No file chosen");
+				System.out.println(path);
+				if(path == null) {
+					throw new SqlException("No such file or no file chosen");
 				}
-				else{*/
-					genSqlTable();
+				else {
+					genSqlTables();
 					generateERD();
-				//}
+				}
 			}
 		});
 		panel.add(generateButton);
@@ -142,8 +142,7 @@ public class SqlFrame extends JFrame {
 		vectors = new LinkedList<Object>();
 		graph.getModel().beginUpdate();
 		
-		try
-		{
+		try {
 			// generowanie tabel encji
 			for(int i = 0; i < tabs.size(); i++) {
 				v = graph.insertVertex(parent, null, tableToString(tabs.get(i)), x*(i+1), y*(i+1), TAB_WIDTH, TAB_HEIGHT);
@@ -174,63 +173,19 @@ public class SqlFrame extends JFrame {
 		repaint();
 	}
 	
-	public void genSqlTable() {
-		//hardcodowanie tabeli 1:
-		Tabela tab = new Tabela();
-		atrybuty = new HashMap<String, String>();
-		
-		x = 100;
-		y = 100;
-		
-		atrybuty.put("test_kluczGlowny", "serial primary key");
-		atrybuty.put("test_kluczObcy1doTest2", "varchar(10) references test2(test2_kluczGlowny)");
-		atrybuty.put("test_kluczObcy2doTest3", "integer references test3(test3_kluczGlowny)");
-		atrybuty.put("test_zwyklyAtrybut", "text");
-		
-		tab.setNazwa("Test");
-		tab.setAtrybuty(atrybuty);
-		tab.szukajPowiazan();
-		
-		tabs.add(tab);
-		
-		/*
-		System.out.println("NAZWA: "+tab.getNazwa());
-		System.out.println("KLUCZ GLOWNY: "+tab.getKluczGlowny());
-		System.out.println("ATRYBUTY:");
-		it = tab.getAtrybuty().entrySet().iterator();
-		for(int i = 0; it.hasNext(); i++) {
-			pair = (Map.Entry)it.next();
-			System.out.println("KLUCZ: "+pair.getKey()+"\nWARTOSC: "+pair.getValue());
+	public void genSqlTables() throws SqlException {
+		try {
+			tabs = new LinkedList<Tabela>();
+			inputstream = new FileInputStream(path);
+			SqlLexer scanner = new SqlLexer(inputstream);
+			SqlCup parser = new SqlCup(scanner);
+			String p = (String) parser.parse().value;
+			tabs = (LinkedList<Tabela>) parser.getTabele();
+		} catch (FileNotFoundException e) {
+			throw new SqlException("No such file or no file chosen");
+		} catch (Exception e) {
+			throw new SqlException("Syntax error in your file");
 		}
-		System.out.println("KLUCZE OBCE: ");
-		for(int i = 0; i < tab.getPowiazania().size(); i++)
-			System.out.println(tab.getPowiazania().get(i).toString());
-		*/
-			
-		//hardcodowanie tabeli 2:
-		tab = new Tabela();
-		atrybuty = new HashMap<String, String>();
-		
-		atrybuty.put("test2_kluczGlowny", "varchar(10) primary key");
-		atrybuty.put("test2_kluczObcyDoTest3", "integer references test3(test3_kluczGlowny)");
-		atrybuty.put("test2_zwyklyAtrybut", "text");
-		tab.setNazwa("Test2");
-		tab.setAtrybuty(atrybuty);
-		tab.szukajPowiazan();
-		tabs.add(tab);
-		
-		//hardcodowanie tabeli 3:
-		tab = new Tabela();
-		atrybuty = new HashMap<String, String>();
-		
-		atrybuty.put("test3_kluczGlowny", "integer primary key");
-		atrybuty.put("test3_zwyklyAtrybut1", "text");
-		atrybuty.put("test3_zwyklyAtrybut2", "text");
-		atrybuty.put("test3_zwyklyAtrybut3", "text");
-		tab.setNazwa("Test3");
-		tab.setAtrybuty(atrybuty);
-		tab.szukajPowiazan();
-		tabs.add(tab);
 	}
 	
 	public String tableToString(Tabela tab) {
@@ -249,10 +204,10 @@ public class SqlFrame extends JFrame {
 				TAB_WIDTH = pair.getKey().toString().length()+varSplit[0].length();
 		}
 		TAB_WIDTH *= 7;
-		TAB_HEIGHT *= 20;
+		TAB_HEIGHT *= 25;
 		
-		String znak_ = new String(new char[(TAB_WIDTH-tab.getNazwa().length())/13]).replace("\0", "_");
-		String s = znak_+tab.getNazwa().toString().toUpperCase()+znak_;
+		String line_ = new String(new char[(TAB_WIDTH/10)]).replace("\0", "_");
+		String s = tab.getNazwa().toString().toUpperCase()+nl+line_;
 		if(tab.getKluczGlowny() != null)
 			s += nl+tab.getKluczGlowny();
 		it = tab.getAtrybuty().entrySet().iterator();

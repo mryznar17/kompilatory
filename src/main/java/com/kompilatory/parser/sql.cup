@@ -54,14 +54,15 @@ new_table 	::=		def:a APOSTROPHE 	{: RESULT=a; :}
 def			::=		CREATE TABLE IF NOT EXISTS ID:var dec	
 					{:  RESULT = "test3000"; 
 						parser.tab.setNazwa(var.toString()); 
-						parser.tab.szukajPowiazan();
+						parser.tab.szukajPowiazan(); 
 						parser.tabele.add(parser.tab);
 						parser.tab=new Tabela();
 					:}		
 				|
 					CREATE TABLE ID:var dec 				
-					{:  parser.tab.setNazwa(var.toString()); 
-						parser.tab.szukajPowiazan();
+
+					{:  parser.tab.setNazwa(var.toString());
+						parser.tab.szukajPowiazan(); 
 						parser.tabele.add(parser.tab);
 						parser.tab=new Tabela();
 					:}	
