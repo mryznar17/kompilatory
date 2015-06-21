@@ -54,7 +54,10 @@ def			::=		CREATE TABLE IF NOT EXISTS ID:var dec	{:  RESULT = "test3000";
 															parser.tabele.add(parser.tab);
 															parser.tab=new Tabela();
 															:}		|
-					CREATE TABLE ID:var dec 				{: parser.tab=new Tabela(); parser.tab.setNazwa(var.toString()); :}	;
+					CREATE TABLE ID:var dec 				{:  parser.tab.setNazwa(var.toString()); 
+															parser.tabele.add(parser.tab);
+															parser.tab=new Tabela();
+															 :}	;
 					
 dec			::= 	LBRACKET mid RBRACKET;
 

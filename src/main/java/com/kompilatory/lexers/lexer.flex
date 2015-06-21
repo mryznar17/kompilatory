@@ -80,8 +80,8 @@
 		"references"	{ return symbol(sym.REFERENCES); }
 		
 				/* types */
-		{INTEGER}		{ return symbol(sym.INTEGER); }
-		{REAL}			{ return symbol(sym.REAL); }
+		{INTEGER}		{ return symbol(sym.INTEGER,new Integer(yytext())); }
+		{REAL}			{ return symbol(sym.REAL,new Double(yytext())); }
 		"varchar"		{ return symbol(sym.VARCHAR); }
 		"text"			{ return symbol(sym.TEXT); }
 		"timestamp"		{ return symbol(sym.TIMESTAMP); }
