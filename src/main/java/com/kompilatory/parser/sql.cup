@@ -43,41 +43,68 @@ non terminal			atr;
 precedence left key,variable;
 
 /* The grammar rules */
-//TODO : Przetestowac i dodawac tabele do linkedList i atrybuty do hashmapy
-input 		::= 	input:a new_table 	{: RESULT=a; :}  	| new_table:a	{: RESULT=a; :}	;
 
-new_table 	::=		def:a APOSTROPHE {: RESULT=a; :};
+input 		::= 	input:a new_table 	{: RESULT=a; :}  	
+				|	 new_table:a		{: RESULT=a; :}	
+				;
 
-def			::=		CREATE TABLE IF NOT EXISTS ID:var dec	{:  RESULT = "test3000";
-															System.out.println(var.toString()+"costam"); 
-															 parser.tab.setNazwa(var.toString()); 
-															parser.tabele.add(parser.tab);
-															parser.tab=new Tabela();
-															:}		|
-					CREATE TABLE ID:var dec 				{:  parser.tab.setNazwa(var.toString()); 
-															parser.tabele.add(parser.tab);
-															parser.tab=new Tabela();
-															 :}	;
-					
+new_table 	::=		def:a APOSTROPHE 	{: RESULT=a; :}
+				;
+
+def			::=		CREATE TABLE IF NOT EXISTS ID:var dec	
+					{:  RESULT = "test3000"; 
+						parser.tab.setNazwa(var.toString()); 
+						parser.tabele.add(parser.tab);
+						parser.tab=new Tabela();
+					:}		
+				|
+					CREATE TABLE ID:var dec 				
+					{:  parser.tab.setNazwa(var.toString()); 
+						parser.tabele.add(parser.tab);
+						parser.tab=new Tabela();
+					:}	
+				;
+						
 dec			::= 	LBRACKET mid RBRACKET;
 
-mid			::=		mid variable	|	variable {:  :}	| 	key	{:  :} ;	
+mid			::=		mid variable	
+				|	variable {:  :}	
+				| 	key	{:  :} 
+				;	
 
-variable	::= 	ID:var	var_type COMMA		{: parser.nazwa=var.toString(); parser.tab.getAtrybuty().put(parser.nazwa,parser.typ); :}	|
-					ID:var	var_type	{: parser.nazwa=var.toString(); parser.tab.getAtrybuty().put(parser.nazwa,parser.typ); :}	;
+variable	::= 	ID:var	var_type COMMA		
+					{: 	parser.nazwa=var.toString(); 
+						parser.tab.getAtrybuty().put(parser.nazwa,parser.typ); 
+					:}	
+				|	ID:var	var_type	
+					{: 	parser.nazwa=var.toString(); 
+						parser.tab.getAtrybuty().put(parser.nazwa,parser.typ); 
+					:}
+				;
 					
 
-var_type	::=		INTEGER_TYPE key	{: parser.typ = "integer "+parser.typ; :} |	INTEGER_TYPE			{: parser.typ = "integer"; :}
-				|	REAL_TYPE key	{: parser.typ = "real "+parser.typ; :}	|	REAL_TYPE				{:  parser.typ = "real"; :}
-				|	VARCHAR LBRACKET INTEGER:var RBRACKET	key {: //parser.typ = "varchar("+var.toString()+") "+parser.typ; :} | VARCHAR  LBRACKET INTEGER:var RBRACKET	{: //parser.typ = "varchar("+var.toString()+")"; 
-																																												parser.typ = "varchar("+var+")"; :}
-				|	TEXT key		{: parser.typ = "text "+parser.typ; :}	| 	TEXT					{:  parser.typ = "text";  :}
-				|	TIMESTAMP key	{: parser.typ = "timestamp "+parser.typ; :}	|	TIMESTAMP				{: parser.typ = "timestamp"; :}
-				|	DATE key		{: parser.typ = "date "+parser.typ; :}	|	DATE					{: parser.typ = "date"; :}
-				|	SERIAL key		{: parser.typ = "serial "+parser.typ; :}	|	SERIAL		{: parser.typ = "serial"; :}			
+var_type	::=		INTEGER_TYPE key	{: parser.typ = "integer "+parser.typ; :} 
+				|	INTEGER_TYPE		{: parser.typ = "integer"; :}
+				|	REAL_TYPE key		{: parser.typ = "real "+parser.typ; :}	
+				|	REAL_TYPE			{:  parser.typ = "real"; :}
+				|	VARCHAR LBRACKET INTEGER:var RBRACKET	key 
+					{: parser.typ = "varchar("+var+") "+parser.typ; :} 
+				| VARCHAR  LBRACKET INTEGER:var RBRACKET	
+					{: parser.typ = "varchar("+var+")"; :} 																																							
+				|	TEXT key			{: parser.typ = "text "+parser.typ; :}	
+				| 	TEXT				{:  parser.typ = "text";  :}
+				|	TIMESTAMP key		{: parser.typ = "timestamp "+parser.typ; :}	
+				|	TIMESTAMP			{: parser.typ = "timestamp"; :}
+				|	DATE key			{: parser.typ = "date "+parser.typ; :}	
+				|	DATE				{: parser.typ = "date"; :}
+				|	SERIAL key			{: parser.typ = "serial "+parser.typ; :}	
+				|	SERIAL				{: parser.typ = "serial"; :}			
 				;
 				
-key			::=		PRIMARY KEY		{: parser.typ = "primary key"; :}	|
-					REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{: parser.typ = "references "+var.toString()+"("+var2.toString()+")";	:}	|
-					PRIMARY KEY	REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{:	 parser.typ = "primary key references "+var.toString()+"("+var2.toString()+")";	:}	|
-					PRIMARY KEY LBRACKET ID:var COMMA ID:var2 RBRACKET {: //TODO: zrobic i zwalidowac :}	;
+key			::=		PRIMARY KEY		{: parser.typ = "primary key"; :}	
+				|	REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	
+						{: parser.typ = "references "+var.toString()+"("+var2.toString()+")"; :}	
+				|	PRIMARY KEY	REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	
+						{: parser.typ = "primary key references "+var.toString()+"("+var2.toString()+")"; :}	
+				|	PRIMARY KEY LBRACKET ID:var COMMA ID:var2 RBRACKET 
+						{: //TODO: zrobic i zwalidowac :}	;

@@ -13,7 +13,7 @@ import com.kompilatory.parser.SqlCup;
 public class TestSqlParser {
 
 	public static void main(String[] args) throws FileNotFoundException {
-		String init="init.sql";
+		String init="init3.sql";
 		
 		InputStream inputstream = new FileInputStream(init);
 		SqlLexer scanner = new SqlLexer(inputstream);
@@ -25,7 +25,7 @@ public class TestSqlParser {
 			System.out.println("test");
 			System.out.println(p);
 		} catch (Exception e) {
-			System.out.println("NULLLLLLLLLLLLLLLLL exception");
+			System.out.println("Tutaj obs³uga wyj¹tku czyli wyskakuj¹ce okno");
 			e.printStackTrace();
 		}
 		
