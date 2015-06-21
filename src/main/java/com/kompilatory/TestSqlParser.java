@@ -13,7 +13,7 @@ import com.kompilatory.parser.SqlCup;
 public class TestSqlParser {
 
 	public static void main(String[] args) throws FileNotFoundException {
-		String init="init3.sql";
+		String init="hurt.sql";
 		
 		InputStream inputstream = new FileInputStream(init);
 		SqlLexer scanner = new SqlLexer(inputstream);
