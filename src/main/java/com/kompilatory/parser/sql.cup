@@ -60,20 +60,21 @@ dec			::= 	LBRACKET mid RBRACKET;
 
 mid			::=		mid variable	|	variable {:  :}	| 	key	{:  :} ;	
 
-variable	::= 	ID:var	var_type COMMA		{: parser.nazwa=var.toString(); parser.tab.getAtrybuty().put(parser.nazwa,"test type"); :}	|
-					ID:var	var_type	{: parser.nazwa=var.toString(); parser.tab.getAtrybuty().put(parser.nazwa,"test type"); :}	;
+variable	::= 	ID:var	var_type COMMA		{: parser.nazwa=var.toString(); parser.tab.getAtrybuty().put(parser.nazwa,parser.typ); :}	|
+					ID:var	var_type	{: parser.nazwa=var.toString(); parser.tab.getAtrybuty().put(parser.nazwa,parser.typ); :}	;
 					
 
-var_type	::=		INTEGER_TYPE key	{:  :} |	INTEGER_TYPE			{:  :}
-				|	REAL_TYPE key		|	REAL_TYPE				{: :}
-				|	VARCHAR LBRACKET INTEGER:val RBRACKET	key | VARCHAR  LBRACKET INTEGER:val RBRACKET	{:  :}
-				|	TEXT key			| 	TEXT					{:  :}
-				|	TIMESTAMP key		|	TIMESTAMP				{:  :}
-				|	DATE key			|	DATE					{:  :}
-				|	SERIAL key		{:  :}	|	SERIAL		{:  :}			
+var_type	::=		INTEGER_TYPE key	{: parser.typ = "integer "+parser.typ; :} |	INTEGER_TYPE			{: parser.typ = "integer"; :}
+				|	REAL_TYPE key	{: parser.typ = "real "+parser.typ; :}	|	REAL_TYPE				{:  parser.typ = "real"; :}
+				|	VARCHAR LBRACKET INTEGER:var RBRACKET	key {: //parser.typ = "varchar("+var.toString()+") "+parser.typ; :} | VARCHAR  LBRACKET INTEGER:var RBRACKET	{: //parser.typ = "varchar("+var.toString()+")"; 
+																																												parser.typ = "varchar("+var+")"; :}
+				|	TEXT key		{: parser.typ = "text "+parser.typ; :}	| 	TEXT					{:  parser.typ = "text";  :}
+				|	TIMESTAMP key	{: parser.typ = "timestamp "+parser.typ; :}	|	TIMESTAMP				{: parser.typ = "timestamp"; :}
+				|	DATE key		{: parser.typ = "date "+parser.typ; :}	|	DATE					{: parser.typ = "date"; :}
+				|	SERIAL key		{: parser.typ = "serial "+parser.typ; :}	|	SERIAL		{: parser.typ = "serial"; :}			
 				;
 				
-key			::=		PRIMARY KEY		{: :}	|
-					REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{:		:}	|
-					PRIMARY KEY	REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{:		:}	|
-					PRIMARY KEY LBRACKET ID:var COMMA ID:var2 RBRACKET {:  :}	;
+key			::=		PRIMARY KEY		{: parser.typ = "primary key"; :}	|
+					REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{: parser.typ = "references "+var.toString()+"("+var2.toString()+")";	:}	|
+					PRIMARY KEY	REFERENCES ID:var LBRACKET  ID:var2 RBRACKET	{:	 parser.typ = "primary key references "+var.toString()+"("+var2.toString()+")";	:}	|
+					PRIMARY KEY LBRACKET ID:var COMMA ID:var2 RBRACKET {: //TODO: zrobic i zwalidowac :}	;

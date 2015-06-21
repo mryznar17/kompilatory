@@ -17,7 +17,8 @@ public class TestLexer {
 
 
 	public static void main(String[] args) throws IOException {
-		String init="init2.sql";
+		
+		String init="init3.sql";
 		//BufferedReader buffer = new BufferedReader(new FileReader(init));
 		//System.out.println(buffer.readLine());
 		InputStream inputstream = new FileInputStream(init);
