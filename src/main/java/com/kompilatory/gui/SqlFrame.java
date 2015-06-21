@@ -1,12 +1,16 @@
 package com.kompilatory.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -14,34 +18,42 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.kompilatory.lexers.SqlLexer;
 import com.kompilatory.model.Tabela;
 import com.kompilatory.parser.SqlCup;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.view.mxGraph;
 
 public class SqlFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private LinkedList <Tabela> tabs = null;
 	private LinkedList<Object> vectors = null;
+	private mxGraph graph = null;
+	private Object parent = null;
 	private Object v = null;
 	private Iterator<?> it = null;
 	private Map.Entry pair = null;
 	private InputStream inputstream;
-	private static int x;
-	private static int y;
+	private int x = 100;
+	private int y = 100;
 	private int TAB_WIDTH;
 	private int TAB_HEIGHT;
 	private JTextField txtField;
 	private String path = null;
 	private String nl = "\n";
+	private JPanel drawPanel;
 	
 	/**
 	 * Launch the application.
@@ -72,7 +84,7 @@ public class SqlFrame extends JFrame {
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
-		panel.setBorder(javax.swing.BorderFactory.createTitledBorder("Settings"));
+		panel.setBorder(javax.swing.BorderFactory.createTitledBorder("Control"));
 		
 		JButton searchButton = new JButton("...");
 		searchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -125,8 +137,7 @@ public class SqlFrame extends JFrame {
 				System.out.println(path);
 				if(path == null) {
 					throw new SqlException("No such file or no file chosen");
-				}
-				else {
+				} else {
 					genSqlTables();
 					generateERD();
 				}
@@ -134,19 +145,71 @@ public class SqlFrame extends JFrame {
 		});
 		panel.add(generateButton);
 		
+		JButton clearButton = new JButton("Clear");
+		clearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					clearButtonActionPerformed(evt);
+				} catch(NullPointerException e) {
+					try {
+						throw new SqlException("It's already clear");
+					} catch (SqlException e1) {
+						e1.showDialog();
+					}
+				}
+			}
+			private void clearButtonActionPerformed(ActionEvent evt) {
+				graph.removeCells(graph.getChildCells(graph.getDefaultParent(), true, true));
+				getContentPane().remove(drawPanel);
+				drawPanel = null;
+				graph.refresh();
+				revalidate();
+				repaint();
+			}
+		});
+		panel.add(clearButton);
+		
+		JButton toPngButton = new JButton("Convert to .PNG file");
+		toPngButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					toPngButtonActionPerformed(evt);
+				} catch(NullPointerException e) {
+					try {
+						throw new SqlException("There is no diagram to convert");
+					} catch (SqlException e1) {
+						e1.showDialog();
+					}
+				} catch (SqlException e) {
+					e.showDialog();
+				}
+			}
+			private void toPngButtonActionPerformed(ActionEvent evt) throws SqlException {
+				BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, Color.WHITE, true, null);
+				try {
+					ImageIO.write(image, "PNG", new File(path+".png"));
+				} catch (IOException e) {
+					throw new SqlException("Couldn't convert diagram");
+				}
+			}
+		});
+		panel.add(toPngButton);
 	}
 	
 	public void generateERD() {
-		mxGraph graph = new mxGraph();
-		//graph.repaint();
-		Object parent = graph.getDefaultParent();
+		//tworzenie panelu do rysowania
+		if(drawPanel == null)
+			drawDrawPanel();
+		
+		graph = new mxGraph();
+		parent = graph.getDefaultParent();
 		vectors = new LinkedList<Object>();
-		graph.getModel().beginUpdate();
 		
 		try {
+			graph.getModel().beginUpdate();
 			// generowanie tabel encji
 			for(int i = 0; i < tabs.size(); i++) {
-				v = graph.insertVertex(parent, null, tableToString(tabs.get(i)), x*(i+1), y*(i+1), TAB_WIDTH, TAB_HEIGHT);
+				v = graph.insertVertex(parent, null, tableToString(tabs.get(i)), x*i, y*i, TAB_WIDTH, TAB_HEIGHT);
 				vectors.add(v);
 			}
 			
@@ -162,18 +225,22 @@ public class SqlFrame extends JFrame {
 				}
 			}
 			
-		}
-		finally
-		{
+		} finally {
 			graph.getModel().endUpdate();
 		}
-
+		
 		mxGraphComponent graphComponent = new mxGraphComponent(graph);
-		getContentPane().add(graphComponent);
-		revalidate();
+		getContentPane().add(drawPanel, BorderLayout.CENTER);
+		drawPanel.add(graphComponent);
+		validate();
 		repaint();
 	}
 	
+	private void drawDrawPanel() {
+		drawPanel = new JPanel();
+		getContentPane().add(drawPanel, BorderLayout.CENTER);
+	}
+
 	public void genSqlTables() throws SqlException {
 		try {
 			tabs = new LinkedList<Tabela>();
@@ -191,7 +258,7 @@ public class SqlFrame extends JFrame {
 	
 	public String tableToString(Tabela tab) {
 		boolean fkFound = false;
-		if(tab.getKluczGlowny() != null)
+		if(tab.getKluczGlowny() != null) 
 			TAB_WIDTH = tab.getKluczGlowny().length();
 		else
 			TAB_WIDTH = 0;
@@ -212,7 +279,7 @@ public class SqlFrame extends JFrame {
 		if(tab.getKluczGlowny() != null)
 			s += nl+tab.getKluczGlowny();
 		it = tab.getAtrybuty().entrySet().iterator();
-		for(int i =0; it.hasNext(); i++) {
+		for(int i = 0; it.hasNext(); i++) {
 			fkFound = false;
 			pair = (Map.Entry)it.next();
 			String[] varSplit = pair.getValue().toString().split(" ");
