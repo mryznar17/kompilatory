@@ -83,6 +83,11 @@
 		{INTEGER}		{ return symbol(sym.INTEGER,new Integer(yytext())); }
 		{REAL}			{ return symbol(sym.REAL,new Double(yytext())); }
 		"varchar"		{ return symbol(sym.VARCHAR); }
+		"boolean"		{ return symbol(sym.BOOLEAN); }
+		"char"			{ return symbol(sym.CHAR); }
+		"null"			{ return symbol(sym.NULL); }
+		"numeric"		{ return symbol(sym.NUMERIC); }
+		"smallint"		{ return symbol(sym.SMALLINT); }
 		"text"			{ return symbol(sym.TEXT); }
 		"timestamp"		{ return symbol(sym.TIMESTAMP); }
 		"date"			{ return symbol(sym.DATE); }

@@ -138,6 +138,7 @@ public class SqlFrame extends JFrame {
 	
 	public void generateERD() {
 		mxGraph graph = new mxGraph();
+		//graph.repaint();
 		Object parent = graph.getDefaultParent();
 		vectors = new LinkedList<Object>();
 		graph.getModel().beginUpdate();

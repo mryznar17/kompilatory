@@ -26,8 +26,8 @@ parser code {:
 		
 terminal    String 	ID;
 terminal 	CREATE, TABLE, IF, NOT, EXISTS, PRIMARY, KEY, REFERENCES;
-terminal 	INTEGER, REAL, VARCHAR, TEXT, TIMESTAMP, DATE, SERIAL, INTEGER_TYPE, REAL_TYPE;
-terminal	LBRACKET, RBRACKET, APOSTROPHE, COMMA;
+terminal 	INTEGER, REAL, VARCHAR, TEXT, TIMESTAMP, DATE, SERIAL, INTEGER_TYPE, REAL_TYPE, CHAR, BOOLEAN, NUMERIC,SMALLINT;
+terminal	LBRACKET, RBRACKET, APOSTROPHE, COMMA, NULL ;
 
 
 /* Non terminals */
@@ -88,20 +88,45 @@ variable	::= 	ID:var	var_type COMMA
 
 var_type	::=		INTEGER_TYPE key	{: parser.typ = "integer "+parser.typ; :} 
 				|	INTEGER_TYPE		{: parser.typ = "integer"; :}
+				|	INTEGER_TYPE NOT NULL		{: parser.typ = "integer"; :}
 				|	REAL_TYPE key		{: parser.typ = "real "+parser.typ; :}	
 				|	REAL_TYPE			{:  parser.typ = "real"; :}
+				|	REAL_TYPE NOT NULL			{:  parser.typ = "real"; :}
+				|	SMALLINT key		{: parser.typ = "smallint "+parser.typ; :}	
+				|	SMALLINT			{: parser.typ = "smallint"; :}
+				|	SMALLINT NOT NULL			{: parser.typ = "smallint"; :}
+				|	CHAR LBRACKET INTEGER:var RBRACKET	key {: parser.typ = "char("+var+") "+parser.typ; :}
+				| 	CHAR  LBRACKET INTEGER:var RBRACKET	
+					{: parser.typ = "char("+var+")"; :}
+				| 	CHAR  LBRACKET INTEGER:var RBRACKET	NOT NULL
+					{: parser.typ = "char("+var+")"; :}
 				|	VARCHAR LBRACKET INTEGER:var RBRACKET	key 
 					{: parser.typ = "varchar("+var+") "+parser.typ; :} 
-				| VARCHAR  LBRACKET INTEGER:var RBRACKET	
-					{: parser.typ = "varchar("+var+")"; :} 																																							
+				| 	VARCHAR  LBRACKET INTEGER:var RBRACKET	
+					{: parser.typ = "varchar("+var+")"; :} 	
+				| 	VARCHAR  LBRACKET INTEGER:var RBRACKET	NOT NULL
+					{: parser.typ = "varchar("+var+")"; :} 	
+				|	NUMERIC  LBRACKET INTEGER:var COMMA INTEGER:var2 RBRACKET
+					{: parser.typ = "numeric("+var+","+var2+")"; :}
+				|	NUMERIC  LBRACKET INTEGER:var COMMA INTEGER:var2 RBRACKET NOT NULL
+					{: parser.typ = "numeric("+var+","+var2+")"; :}
+				|	NUMERIC  LBRACKET INTEGER:var COMMA INTEGER:var2 RBRACKET key
+					{: parser.typ = "numeric("+var+","+var2+")"+parser.typ; :}																																				
 				|	TEXT key			{: parser.typ = "text "+parser.typ; :}	
 				| 	TEXT				{:  parser.typ = "text";  :}
+				| 	TEXT	NOT NULL			{:  parser.typ = "text";  :}
+				|	BOOLEAN key			{: parser.typ = "boolean "+parser.typ; :}
+				|	BOOLEAN				{: parser.typ = "boolean"; :}
+				|	BOOLEAN	 NOT NULL			{: parser.typ = "boolean"; :}
 				|	TIMESTAMP key		{: parser.typ = "timestamp "+parser.typ; :}	
 				|	TIMESTAMP			{: parser.typ = "timestamp"; :}
+				|	TIMESTAMP NOT NULL			{: parser.typ = "timestamp"; :}
 				|	DATE key			{: parser.typ = "date "+parser.typ; :}	
 				|	DATE				{: parser.typ = "date"; :}
+				|	DATE NOT NULL				{: parser.typ = "date"; :}
 				|	SERIAL key			{: parser.typ = "serial "+parser.typ; :}	
-				|	SERIAL				{: parser.typ = "serial"; :}			
+				|	SERIAL				{: parser.typ = "serial"; :}	
+				|	SERIAL NOT NULL				{: parser.typ = "serial"; :}		
 				;
 				
 key			::=		PRIMARY KEY		{: parser.typ = "primary key"; :}	
