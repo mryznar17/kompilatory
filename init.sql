@@ -24,7 +24,7 @@ create table if not exists gps_location(
 );
 
 create table if not exists user_preferences(
-	prf_usr_id serial primary key references users(usr_id),
+	prf_usr_id serial references users(usr_id),
 	prf_time_spending text,
 	prf_active_level integer,
 	prf_speed real,
@@ -39,13 +39,13 @@ create table if not exists group_profile(
 );
 
 create table if not exists group_content(
-	con_grp_id	integer primary key references group_profile(grp_id),
-	con_usr_id	integer primary key references users(usr_id)
+	con_grp_id	integer references group_profile(grp_id),
+	con_usr_id	integer references users(usr_id)
 	/*primary key(con_grp_id,con_usr_id)*/	
 );
 
 create table if not exists friends(
-	fri_usr_id	integer  primary key references users(usr_id),
+	fri_usr_id	integer references users(usr_id),
 	fri_id	integer  primary key
 	/*primary key(fri_usr_id,fri_id)	*/
 );
@@ -78,8 +78,8 @@ create table if not exists lately_searched_poi(
 );
 
 create table if not exists node_way(
-	now_way_id integer primary key references way(way_id),
-	now_node_id integer primary key references node(nod_id)
+	now_way_id integer references way(way_id),
+	now_node_id integer references node(nod_id)
 	/*primary key(now_way_id,now_node_id)*/
 );
 
@@ -96,31 +96,4 @@ create table if not exists ways_history(
 	wah_way_id	integer references way(way_id),
 	wah_date	timestamp,
 	wah_usr_id	integer references users(usr_id)
-);
-
-create table if not exists weather(
-	wea_id_city	serial primary key,
-	wea_name	text,
-	wea_country	text,
-	wea_lat	real,
-	wea_lon	real,
-	wea_cnt	integer,
-	wea_dt	timestamp,
-	wea_temp	integer,
-	wea_humindity	integer,
-	wea_temp_min	integer,
-	wea_temp_max	integer,
-	wea_pressure	integer,
-	wea_sea_level	integer,
-	wea_grnd_level	integer,
-	wea_speed	integer,
-	wea_deg	integer,
-	wea_gust	integer,
-	wea_all	integer,
-	wea_id_condition	integer,
-	wea_main	text,
-	wea_descripton	text,
-	wea_icon	integer,
-	wea_3h_rain	integer,
-	wea_3h_snow	integer
 );

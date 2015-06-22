@@ -2,7 +2,6 @@ package com.kompilatory.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,17 +16,15 @@ import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.kompilatory.lexers.SqlLexer;
 import com.kompilatory.model.Tabela;
@@ -46,8 +43,6 @@ public class SqlFrame extends JFrame {
 	private Iterator<?> it = null;
 	private Map.Entry pair = null;
 	private InputStream inputstream;
-	private int x = 100;
-	private int y = 100;
 	private int TAB_WIDTH;
 	private int TAB_HEIGHT;
 	private JTextField txtField;
@@ -169,7 +164,7 @@ public class SqlFrame extends JFrame {
 		});
 		panel.add(clearButton);
 		
-		JButton toPngButton = new JButton("Convert to .PNG file");
+		JButton toPngButton = new JButton("Convert to PNG file");
 		toPngButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				try {
@@ -188,7 +183,7 @@ public class SqlFrame extends JFrame {
 				BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, Color.WHITE, true, null);
 				try {
 					ImageIO.write(image, "PNG", new File(path+".png"));
-				} catch (IOException e) {
+				} catch (NullPointerException | IllegalArgumentException | IOException e) {
 					throw new SqlException("Couldn't convert diagram");
 				}
 			}
@@ -197,7 +192,7 @@ public class SqlFrame extends JFrame {
 	}
 	
 	public void generateERD() {
-		//tworzenie panelu do rysowania
+		// tworzenie panelu do rysowania
 		if(drawPanel == null)
 			drawDrawPanel();
 		
@@ -209,7 +204,7 @@ public class SqlFrame extends JFrame {
 			graph.getModel().beginUpdate();
 			// generowanie tabel encji
 			for(int i = 0; i < tabs.size(); i++) {
-				v = graph.insertVertex(parent, null, tableToString(tabs.get(i)), x*i, y*i, TAB_WIDTH, TAB_HEIGHT);
+				v = graph.insertVertex(parent, null, tableToString(tabs.get(i)), (new Random()).nextInt(1000), (new Random()).nextInt(500), TAB_WIDTH, TAB_HEIGHT);
 				vectors.add(v);
 			}
 			
@@ -274,7 +269,7 @@ public class SqlFrame extends JFrame {
 		TAB_WIDTH *= 7;
 		TAB_HEIGHT *= 25;
 		
-		String line_ = new String(new char[(TAB_WIDTH/10)]).replace("\0", "_");
+		String line_ = new String(new char[(TAB_WIDTH/7)]).replace("\0", "_");
 		String s = tab.getNazwa().toString().toUpperCase()+nl+line_;
 		if(tab.getKluczGlowny() != null)
 			s += nl+tab.getKluczGlowny();
