@@ -138,6 +138,7 @@ public class SqlFrame extends JFrame {
 				if(path == null) {
 					throw new SqlException("No such file or no file chosen");
 				} else {
+					//drawPanel.se
 					genSqlTables();
 					generateERD();
 				}
@@ -201,6 +202,7 @@ public class SqlFrame extends JFrame {
 		if(drawPanel == null)
 			drawDrawPanel();
 		
+		drawPanel.setBounds(100, 100, 1000, 600);
 		graph = new mxGraph();
 		parent = graph.getDefaultParent();
 		vectors = new LinkedList<Object>();
@@ -209,6 +211,7 @@ public class SqlFrame extends JFrame {
 			graph.getModel().beginUpdate();
 			// generowanie tabel encji
 			for(int i = 0; i < tabs.size(); i++) {
+				
 				v = graph.insertVertex(parent, null, tableToString(tabs.get(i)), x*i, y*i, TAB_WIDTH, TAB_HEIGHT);
 				vectors.add(v);
 			}
